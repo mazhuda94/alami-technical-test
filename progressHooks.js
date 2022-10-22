@@ -2,7 +2,6 @@ import React from "react"
 
 export const useProgress = () => {
     const [progress, setProgress] = React.useState(0)
-    const [loading, setLoading] = React.useState(true)
     const interval = React.useRef()
 
     const startProgress = React.useCallback((initialTime) => {
@@ -21,7 +20,6 @@ export const useProgress = () => {
     React.useEffect(() => {
         if (progress > 1000) {
             clearInterval(interval.current)
-            setLoading(false)
         }
     }, [progress])
 
@@ -33,6 +31,5 @@ export const useProgress = () => {
         percentage,
         startProgress,
         interval,
-        loading
     }
 }

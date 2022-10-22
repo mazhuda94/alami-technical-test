@@ -1,5 +1,5 @@
 import React from 'react'
-import { FlatList, Image, NativeModules, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { FlatList, Image, NativeModules, RefreshControl, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useProductCart } from './productCartHooks'
 import { useProgress } from './progressHooks'
 
@@ -42,12 +42,7 @@ const DeviceID = () => {
 }
 
 const ProductCart = () => {
-  const { products, addToCart, cart, deleteFromCart, summary } = useProductCart()
-  const { loading } = useProgress()
-
-  if (loading) {
-    return null
-  }
+  const { products, addToCart, cart, deleteFromCart, summary, loading, getProducts } = useProductCart()
 
   return (
     <View style={{ flex: 1 }}>
@@ -55,7 +50,12 @@ const ProductCart = () => {
         contentContainerStyle={{ padding: 16 }}
         data={products}
         keyExtractor={(_, idx) => idx.toString()}
-        ListEmptyComponent={() => <Text>Memuat Data. . .</Text>}
+        ListEmptyComponent={() => {
+          if (!loading && !products) {
+            return <Text>Terjadi kesalahan, tarik kebawah untuk memuat ulang.</Text>
+          }
+          return null
+        }}
         ItemSeparatorComponent={() => <View style={{ marginVertical: 4 }} />}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
@@ -99,6 +99,7 @@ const ProductCart = () => {
             </View>
           )
         }}
+        refreshControl={<RefreshControl onRefresh={getProducts} refreshing={loading} />}
       />
       <View style={{ backgroundColor: '#cdfcf6', padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <View>

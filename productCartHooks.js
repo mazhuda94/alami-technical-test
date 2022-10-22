@@ -6,12 +6,20 @@ export const useProductCart = () => {
     const [products, setProducts] = React.useState(null)
     const [cart, setCart] = React.useState([])
     const [summary, setSummary] = React.useState({ totalBelanja: 0, totalProduct: 0 })
+    const [loading, setLoading] = React.useState(false)
 
     const getProducts = useCallback(async () => {
-        const body = await fetch(URL, { method: 'GET' })
-        const data = await body.json()
-        if (data) {
-            setProducts(data)
+        setLoading(true)
+        setProducts(null)
+        try {
+            const body = await fetch(URL, { method: 'GET' })
+            const data = await body.json()
+            if (data) {
+                setProducts(data)
+                setLoading(false)
+            }
+        } catch (error) {
+            setLoading(false)
         }
     }, [])
 
@@ -47,6 +55,8 @@ export const useProductCart = () => {
         cart,
         addToCart,
         deleteFromCart,
-        summary
+        summary,
+        getProducts,
+        loading
     }
 }
